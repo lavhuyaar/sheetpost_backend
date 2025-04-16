@@ -1,16 +1,18 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import { errorHandler } from './middlewares/errorHandler';
-import authRoutes from './routes/authRoutes';
+import authorRoutes from './routes/authorRoutes';
 import postRoutes from './routes/postRoutes';
 import commentRoutes from './routes/commentRoutes';
+import userRoutes from './routes/userRoutes';
 
 const app = express();
 app.use(express.json());
 
 //Routes
-app.use('/', authRoutes);
-app.use('/posts', postRoutes);
-app.use('/comments', commentRoutes);
+app.use('/', authorRoutes);
+app.use('/', userRoutes);
+// app.use('/posts', postRoutes);
+// app.use('/comments', commentRoutes);
 
 //Global error handler
 app.use(errorHandler);

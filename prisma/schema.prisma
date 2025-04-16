@@ -9,7 +9,7 @@ datasource db {
 
 model Author {
   id        String    @unique @default(uuid())
-  username  String    @unique @db.Char(15)
+  email     String    @unique
   firstName String    @db.VarChar(15)
   lastName  String    @db.VarChar(15)
   password  String    @db.Char(1000)
@@ -28,8 +28,8 @@ model User {
   password  String    @db.Char(1000)
   comments  Comment[]
   createdAt DateTime  @default(now())
-  role      Role      @default(USER)
   updatedAt DateTime  @default(now())
+  role      Role      @default(USER)
 }
 
 model Post {
