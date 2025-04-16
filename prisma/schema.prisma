@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Author {
   id        String    @unique @default(uuid())
   username  String    @unique @db.Char(15)
   firstName String    @db.VarChar(15)
@@ -17,13 +17,25 @@ model User {
   comments  Comment[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now())
+  role      Role      @default(AUTHOR)
+}
+
+model User {
+  id        String    @unique @default(uuid())
+  username  String    @unique @db.Char(15)
+  firstName String    @db.VarChar(15)
+  lastName  String    @db.VarChar(15)
+  password  String    @db.Char(1000)
+  comments  Comment[]
+  createdAt DateTime  @default(now())
   role      Role      @default(USER)
+  updatedAt DateTime  @default(now())
 }
 
 model Post {
   id          String    @unique @default(uuid())
-  user        User      @relation(fields: [userId], references: [id])
-  userId      String
+  author      Author    @relation(fields: [authorId], references: [id])
+  authorId    String
   title       String    @db.Char(50)
   content     String    @db.Char(1000)
   comments    Comment[]
@@ -38,6 +50,8 @@ model Comment {
   postId    String
   user      User     @relation(fields: [userId], references: [id])
   userId    String
+  authorId  String?
+  author    Author?  @relation(fields: [authorId], references: [id])
   content   String   @db.Char(250)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
@@ -45,5 +59,5 @@ model Comment {
 
 enum Role {
   USER
-  ADMIN
+  AUTHOR
 }

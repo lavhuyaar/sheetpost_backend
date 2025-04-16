@@ -1,14 +1,16 @@
 import express, { Request, Response } from 'express';
 import { errorHandler } from './middlewares/errorHandler';
+import authRoutes from './routes/authRoutes';
+import postRoutes from './routes/postRoutes';
+import commentRoutes from './routes/commentRoutes';
 
 const app = express();
 app.use(express.json());
 
-app.get('/', (req: Request, res: Response) => {
-  res.json({
-    title: 'Hello world',
-  });
-});
+//Routes
+app.use('/', authRoutes);
+app.use('/posts', postRoutes);
+app.use('/comments', commentRoutes);
 
 //Global error handler
 app.use(errorHandler);
