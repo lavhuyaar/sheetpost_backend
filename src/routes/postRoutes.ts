@@ -1,11 +1,27 @@
 import { Router } from 'express';
+import {
+  createNewPost,
+  deletePost,
+  editPost,
+  getAllPosts,
+  getAuthorPosts,
+  getPost,
+} from '../controllers/postController';
+import { verifyToken } from '../middlewares/verifyToken';
+import verifyAuthor from '../middlewares/verifyAuthor';
 const postRoutes = Router();
 
-postRoutes.get('/all'); //Get all posts
-postRoutes.get('/:postId'); //Get post with id
-postRoutes.get('/:authorId/all'); //Get all posts of an author
-postRoutes.post('/:authorId'); //Post a new post
-postRoutes.put('/:postId'); //Edit post
-postRoutes.delete('/:postId'); //Delete post
+//Unprotected routes
+postRoutes.get('/', getAllPosts); //Get all posts
+postRoutes.get('/:postId', getPost); //Get post with id
+postRoutes.get('/:authorId/all', getAuthorPosts); //Get all posts of an author
+
+//Authorization middlewares
+postRoutes.use(verifyToken, verifyAuthor);
+
+//Protected Routes
+postRoutes.post('/new', createNewPost); //Post a new post
+postRoutes.put('/:postId', editPost); //Edit post
+postRoutes.delete('/:postId', deletePost); //Delete post
 
 export default postRoutes;

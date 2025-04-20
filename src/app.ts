@@ -11,7 +11,7 @@ app.use(express.json());
 //Routes
 app.use('/', authorRoutes);
 app.use('/', userRoutes);
-// app.use('/posts', postRoutes);
+app.use('/posts', postRoutes);
 // app.use('/comments', commentRoutes);
 
 //Global error handler
