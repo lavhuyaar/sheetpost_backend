@@ -18,11 +18,11 @@ interface PostFilters {
   };
 }
 
+//Gets all published posts (for website)
 export const getPosts = async (
   limit: number,
   page: number,
   sortBy: SortOrder,
-  fromUser: boolean,
 ) => {
   //Pagination values
   const safeLimit: number = Math.max(1, limit);
@@ -33,16 +33,12 @@ export const getPosts = async (
     skip: startIndex,
     take: safeLimit,
     orderBy: { createdAt: sortBy },
-  };
-  const postsCount = await db.post.count({ where: filters.where });
-
-  //Only published posts are returned to User
-  fromUser &&
-    (filters.where = {
-      ...filters.where,
+    where: {
       isPublished: true,
-    });
+    },
+  };
 
+  const postsCount = await db.post.count({ where: filters.where });
   const posts = await db.post.findMany(filters);
 
   return {
@@ -70,7 +66,6 @@ export const getPostsByAuthorId = async (
   limit: number,
   page: number,
   sortBy: SortOrder,
-  fromUser: boolean,
 ) => {
   //Pagination values
   const safeLimit: number = Math.max(1, limit);
@@ -83,18 +78,12 @@ export const getPostsByAuthorId = async (
     orderBy: { createdAt: sortBy },
     where: {
       authorId,
+      isPublished: true,
     },
     select: {
       comments: true,
     },
   };
-
-  //Only published posts are returned to User
-  fromUser &&
-    (filters.where = {
-      ...filters?.where,
-      isPublished: true,
-    });
 
   const posts = await db.post.findMany(filters);
 
@@ -146,4 +135,19 @@ export const deletePostById = async (id: string, authorId: string) => {
       authorId,
     },
   });
+};
+
+export const getAdminPosts = async (authorId: string) => {
+  const posts = await db.post.findMany({
+    where: {
+      authorId,
+    },
+  });
+  const totalCount = await db.post.count({
+    where: {
+      authorId,
+    },
+  });
+
+  return { posts, totalCount };
 };

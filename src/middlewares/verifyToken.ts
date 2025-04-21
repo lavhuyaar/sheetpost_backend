@@ -1,5 +1,5 @@
 import { NextFunction, Response } from 'express';
-import { CustomRequest } from '../../types';
+import { CustomRequest } from '../types/types';
 
 
 export const verifyToken = (

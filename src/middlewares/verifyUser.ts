@@ -1,14 +1,9 @@
 import { NextFunction, Response } from 'express';
 import { CustomRequest } from '../types/types';
 import jwt from 'jsonwebtoken';
-const secretKey: string | undefined = process.env
-  .JWT_AUTHOR_SECRET_KEY as string; //Secret JWT Key
+const secretKey: string | undefined = process.env.JWT_USER_SECRET_KEY as string; //Secret JWT Key
 
-const verifyAuthor = (
-  req: CustomRequest,
-  res: Response,
-  next: NextFunction,
-) => {
+const verifyUser = (req: CustomRequest, res: Response, next: NextFunction) => {
   if (!req.token) {
     res.status(401).json({
       message: 'Token not found',
@@ -23,9 +18,9 @@ const verifyAuthor = (
       });
       return;
     }
-    //If authorData is valid
+    //If userData is valid
     if (typeof decoded === 'object') {
-      req.authorId = decoded?.author?.id;
+      req.userId = decoded?.user?.id;
       next();
     } else {
       res.status(403).json({
@@ -36,4 +31,4 @@ const verifyAuthor = (
   });
 };
 
-export default verifyAuthor;
+export default verifyUser;

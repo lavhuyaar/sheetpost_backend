@@ -3,31 +3,25 @@ import {
   createPost,
   deletePostById,
   editPostById,
+  getAdminPosts,
   getPostById,
   getPosts,
   getPostsByAuthorId,
 } from '../db/queries/postQueries';
-import { CustomRequest, SortOrder } from '../../types';
+import { CustomRequest, SortOrder } from '../types/types';
+import { deleteAllCommentsOnPost } from '../db/queries/commentQueries';
 
 export const getAllPosts = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  const {
-    limit = 10,
-    page = 1,
-    sortBy = 'desc',
-    fromAdmin = false,
-  } = req.query;
-
-  const reqFromUser = fromAdmin !== 'true';
+  const { limit = 10, page = 1, sortBy = 'desc' } = req.query;
 
   const { postsCount, posts } = await getPosts(
     Number(limit),
     Number(page),
     sortBy as SortOrder,
-    reqFromUser,
   );
 
   res.status(200).json({
@@ -65,20 +59,14 @@ export const getPost = async (
   return;
 };
 
+//Get all published posts by a particular author
 export const getAuthorPosts = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   const { authorId } = req.params;
-  const {
-    fromAdmin = false,
-    limit = 10,
-    page = 1,
-    sortBy = 'desc',
-  } = req.query;
-
-  const reqFromUser = !fromAdmin;
+  const { limit = 10, page = 1, sortBy = 'desc' } = req.query;
 
   if (!authorId) {
     res.status(404).json({
@@ -92,7 +80,6 @@ export const getAuthorPosts = async (
     Number(limit),
     Number(page),
     sortBy as SortOrder,
-    reqFromUser,
   );
 
   res.status(200).json({
@@ -177,6 +164,30 @@ export const deletePost = async (
     await deletePostById(postId, authorId);
     res.status(200).json({
       message: 'Post deleted successfully',
+    });
+    await deleteAllCommentsOnPost(postId, authorId);
+    //Later add the logic to delete all comments with this postId as well
+    return;
+  } else {
+    res.status(404).json({
+      message: 'Invalid token or Author not found',
+    });
+  }
+};
+
+//Gets all posts created by an admin (author)
+export const getPostsByAdmin = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { authorId } = req;
+
+  if (authorId) {
+    const { posts, totalCount } = await getAdminPosts(authorId);
+    res.status(200).json({
+      posts,
+      totalCount,
     });
     return;
   } else {

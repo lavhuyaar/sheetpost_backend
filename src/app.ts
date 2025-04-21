@@ -12,7 +12,7 @@ app.use(express.json());
 app.use('/', authorRoutes);
 app.use('/', userRoutes);
 app.use('/posts', postRoutes);
-// app.use('/comments', commentRoutes);
+app.use('/comments', commentRoutes);
 
 //Global error handler
 app.use(errorHandler);
