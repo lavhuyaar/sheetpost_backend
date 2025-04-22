@@ -10,6 +10,8 @@ import {
 } from '../db/queries/postQueries';
 import { CustomRequest, SortOrder } from '../types/types';
 import { deleteAllCommentsOnPost } from '../db/queries/commentQueries';
+import { validatePost } from '../validators/validators';
+import { validationResult } from 'express-validator';
 
 export const getAllPosts = async (
   req: Request,
@@ -88,44 +90,70 @@ export const getAuthorPosts = async (
   return;
 };
 
-export const createNewPost = async (
-  req: CustomRequest,
-  res: Response,
-  next: NextFunction,
-) => {
-  const { authorId } = req;
-  const { title, content, isPublished } = req.body;
+export const createNewPost = [
+  ...validatePost,
+  async (req: CustomRequest, res: Response, next: NextFunction) => {
+    const { authorId } = req;
 
-  if (authorId) {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res.status(401).json({
+        errors: errors.array(),
+      });
+      return;
+    }
+
+    if (!authorId) {
+      res.status(404).json({
+        message: 'Invalid token or Author not found',
+      });
+
+      return;
+    }
+
+    const { title, content, isPublished } = req.body;
+
     const newPost = await createPost(title, content, authorId, isPublished);
     res.status(200).json({
       post: newPost,
       message: 'Post created successfully',
     });
     return;
-  } else {
-    res.status(404).json({
-      message: 'Invalid token or Author not found',
-    });
-  }
-};
+  },
+];
 
-export const editPost = async (
-  req: CustomRequest,
-  res: Response,
-  next: NextFunction,
-) => {
-  const { postId } = req.params;
-  const { authorId } = req;
-  const { title, content, isPublished } = req.body;
-  if (!postId) {
-    res.status(404).json({
-      message: 'Post not found',
-    });
-    return;
-  }
+export const editPost = [
+  ...validatePost,
+  async (req: CustomRequest, res: Response, next: NextFunction) => {
+    const { postId } = req.params;
+    const { authorId } = req;
 
-  if (authorId) {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res.status(401).json({
+        errors: errors.array(),
+      });
+      return;
+    }
+
+    if (!postId) {
+      res.status(404).json({
+        message: 'Post not found',
+      });
+      return;
+    }
+
+    if (!authorId) {
+      res.status(404).json({
+        message: 'Invalid token or Author not found',
+      });
+      return;
+    }
+
+    const { title, content, isPublished } = req.body;
+
     const editedPost = await editPostById(
       title,
       content,
@@ -138,12 +166,8 @@ export const editPost = async (
       message: 'Post edited successfully',
     });
     return;
-  } else {
-    res.status(404).json({
-      message: 'Invalid token or Author not found',
-    });
-  }
-};
+  },
+];
 
 export const deletePost = async (
   req: CustomRequest,
@@ -160,19 +184,18 @@ export const deletePost = async (
     return;
   }
 
-  if (authorId) {
-    await deletePostById(postId, authorId);
-    res.status(200).json({
-      message: 'Post deleted successfully',
-    });
-    await deleteAllCommentsOnPost(postId, authorId);
-    //Later add the logic to delete all comments with this postId as well
-    return;
-  } else {
+  if (!authorId) {
     res.status(404).json({
       message: 'Invalid token or Author not found',
     });
+    return;
   }
+  await deleteAllCommentsOnPost(postId, authorId); //Deletes all comments made of post along with post
+  await deletePostById(postId, authorId);
+  res.status(200).json({
+    message: 'Post deleted successfully',
+  });
+  return;
 };
 
 //Gets all posts created by an admin (author)
@@ -183,16 +206,16 @@ export const getPostsByAdmin = async (
 ) => {
   const { authorId } = req;
 
-  if (authorId) {
-    const { posts, totalCount } = await getAdminPosts(authorId);
-    res.status(200).json({
-      posts,
-      totalCount,
-    });
-    return;
-  } else {
+  if (!authorId) {
     res.status(404).json({
       message: 'Invalid token or Author not found',
     });
+    return;
   }
+  const { posts, totalCount } = await getAdminPosts(authorId);
+  res.status(200).json({
+    posts,
+    totalCount,
+  });
+  return;
 };

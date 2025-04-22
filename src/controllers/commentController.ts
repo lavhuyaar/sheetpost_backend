@@ -8,6 +8,8 @@ import {
   getCommentsByPostId,
 } from '../db/queries/commentQueries';
 import { CustomRequest } from '../types/types';
+import { validationResult } from 'express-validator';
+import { validateComment } from '../validators/validators';
 
 export const getCommentsOnPost = async (
   req: Request,
@@ -55,44 +57,52 @@ export const getCommentsOnAuthor = async (
   return;
 };
 
-export const editCommentById = async (
-  req: CustomRequest,
-  res: Response,
-  next: NextFunction,
-) => {
-  const { userId } = req;
-  const { commentId } = req.params;
+export const editCommentById = [
+  ...validateComment,
+  async (req: CustomRequest, res: Response, next: NextFunction) => {
+    const { userId } = req;
+    const { commentId } = req.params;
 
-  if (!userId) {
-    res.status(404).json({
-      message: 'Invalid token or User not found',
+    if (!userId) {
+      res.status(404).json({
+        message: 'Invalid token or User not found',
+      });
+      return;
+    }
+    if (!commentId) {
+      res.status(404).json({
+        message: 'Missing Comment ID',
+      });
+      return;
+    }
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res.status(401).json({
+        errors: errors.array(),
+      });
+      return;
+    }
+
+    const { content } = req.body;
+
+    const comment = await editComment(content, commentId, userId);
+
+    if (!comment) {
+      res.status(404).json({
+        message: 'Unable to edit comment',
+      });
+      return;
+    }
+
+    res.status(200).json({
+      comment,
+      message: 'Comment updated successfully',
     });
     return;
-  }
-  if (!commentId) {
-    res.status(404).json({
-      message: 'Missing Comment ID',
-    });
-    return;
-  }
-
-  const { content } = req.body;
-
-  const comment = await editComment(content, commentId, userId);
-
-  if (!comment) {
-    res.status(404).json({
-      message: 'Unable to edit comment',
-    });
-    return;
-  }
-
-  res.status(200).json({
-    comment,
-    message: 'Comment updated successfully',
-  });
-  return;
-};
+  },
+];
 
 export const deleteCommentByUser = async (
   req: CustomRequest,
@@ -151,31 +161,40 @@ export const deleteCommentByAdmin = async (
   return;
 };
 
-export const createNewComment = async (
-  req: CustomRequest,
-  res: Response,
-  next: NextFunction,
-) => {
-  const { userId } = req;
-  if (!userId) {
-    res.status(404).json({
-      message: 'Invalid token or User not found',
+export const createNewComment = [
+  ...validateComment,
+  async (req: CustomRequest, res: Response, next: NextFunction) => {
+    const { userId } = req;
+    if (!userId) {
+      res.status(404).json({
+        message: 'Invalid token or User not found',
+      });
+      return;
+    }
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res.status(401).json({
+        errors: errors.array(),
+      });
+      return;
+    }
+
+    const { authorId, content, postId } = req.body;
+
+    const newComment = await createComment(content, postId, userId, authorId);
+
+    if (!newComment) {
+      res.status(400).json({
+        message: 'Failed to add comment',
+      });
+      return;
+    }
+
+    res.status(200).json({
+      comment: newComment,
+      message: 'Comment created successfully',
     });
-    return;
-  }
-  const { authorId, content, postId } = req.body;
-
-  const newComment = await createComment(content, postId, userId, authorId);
-
-  if (!newComment) {
-    res.status(400).json({
-      message: 'Failed to add comment',
-    });
-    return;
-  }
-
-  res.status(200).json({
-    comment: newComment,
-    message: 'Comment created successfully',
-  });
-};
+  },
+];
