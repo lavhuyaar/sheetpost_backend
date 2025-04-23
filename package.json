@@ -33,6 +33,7 @@
     "content-type": "^1.0.5",
     "cookie": "^0.7.2",
     "cookie-signature": "^1.2.2",
+    "cors": "^2.8.5",
     "create-require": "^1.1.1",
     "cross-spawn": "^7.0.6",
     "debug": "^4.4.0",
@@ -168,6 +169,7 @@
     "yocto-queue": "^0.1.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.14.1",
