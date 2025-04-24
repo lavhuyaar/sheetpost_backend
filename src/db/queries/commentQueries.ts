@@ -5,7 +5,7 @@ export const getCommentsByPostId = async (postId: string) => {
     where: {
       postId,
     },
-    select: {
+    include: {
       user: true,
       author: true,
     },
@@ -26,7 +26,7 @@ export const getCommentsByAuthorId = async (authorId: string) => {
     where: {
       authorId,
     },
-    select: {
+    include: {
       user: true,
     },
   });

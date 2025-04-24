@@ -3,6 +3,7 @@ import {
   createNewPost,
   deletePost,
   editPost,
+  getAdminPost,
   getAllPosts,
   getAuthorPosts,
   getPost,
@@ -22,6 +23,7 @@ postRoutes.use(verifyToken, verifyAuthor);
 
 //Protected Routes
 postRoutes.get('/admin', getPostsByAdmin); //Get all posts by Author (admin panel)
+postRoutes.get('/admin/:postId', getAdminPost) //Get particular post of Author (admin panel)
 postRoutes.post('/new', createNewPost); //Post a new post
 postRoutes.put('/post/:postId', editPost); //Edit post
 postRoutes.delete('/post/:postId', deletePost); //Delete post

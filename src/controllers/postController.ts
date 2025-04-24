@@ -4,6 +4,7 @@ import {
   deletePostById,
   editPostById,
   getAdminPosts,
+  getAuthorPost,
   getPostById,
   getPosts,
   getPostsByAuthorId,
@@ -217,5 +218,37 @@ export const getPostsByAdmin = async (
     posts,
     totalCount,
   });
+  return;
+};
+
+export const getAdminPost = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { authorId } = req;
+
+  if (!authorId) {
+    res.status(404).json({
+      message: 'Invalid token or Author not found',
+    });
+    return;
+  }
+
+  const { postId } = req.params;
+
+  if (!postId) {
+    res.status(404).json({
+      message: 'Missing Post ID',
+    });
+    return;
+  }
+
+  const post = await getAuthorPost(postId, authorId);
+
+  res.status(200).json({
+    post,
+  });
+
   return;
 };
