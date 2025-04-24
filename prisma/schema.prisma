@@ -36,8 +36,8 @@ model Post {
   id          String    @id @default(uuid())
   author      Author    @relation(fields: [authorId], references: [id])
   authorId    String
-  title       String    @db.Char(50)
-  content     String    @db.Char(3000)
+  title       String    @db.Char(100)
+  content     String    @db.Char(8000)
   comments    Comment[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

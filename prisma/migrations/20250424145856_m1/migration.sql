@@ -33,8 +33,8 @@ CREATE TABLE "User" (
 CREATE TABLE "Post" (
     "id" TEXT NOT NULL,
     "authorId" TEXT NOT NULL,
-    "title" CHAR(50) NOT NULL,
-    "content" CHAR(3000) NOT NULL,
+    "title" CHAR(100) NOT NULL,
+    "content" CHAR(8000) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "isPublished" BOOLEAN NOT NULL,
