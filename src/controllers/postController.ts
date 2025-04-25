@@ -246,6 +246,13 @@ export const getAdminPost = async (
 
   const post = await getAuthorPost(postId, authorId);
 
+  if (!post) {
+    res.status(404).json({
+      message: 'Post not found',
+    });
+    return;
+  }
+
   res.status(200).json({
     post,
   });
