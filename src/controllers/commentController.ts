@@ -7,7 +7,7 @@ import {
   getCommentsByAuthorId,
   getCommentsByPostId,
 } from '../db/queries/commentQueries';
-import { CustomRequest } from '../types/types';
+import { CustomRequest, SortOrder } from '../types/types';
 import { validationResult } from 'express-validator';
 import { validateComment } from '../validators/validators';
 
@@ -48,7 +48,14 @@ export const getCommentsOnAuthor = async (
     return;
   }
 
-  const { comments, totalCount } = await getCommentsByAuthorId(authorId);
+  const { limit = 10, page = 1, sortBy = 'desc' } = req.params;
+
+  const { comments, totalCount } = await getCommentsByAuthorId(
+    authorId,
+    Number(limit),
+    Number(page),
+    sortBy as SortOrder,
+  );
   res.status(200).json({
     comments,
     totalCount,

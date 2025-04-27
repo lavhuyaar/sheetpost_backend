@@ -1,3 +1,4 @@
+import { SortOrder } from '../../types/types';
 import db from '../db';
 
 export const getCommentsByPostId = async (postId: string) => {
@@ -21,13 +22,28 @@ export const getCommentsByPostId = async (postId: string) => {
   return { comments, totalCount };
 };
 
-export const getCommentsByAuthorId = async (authorId: string) => {
+export const getCommentsByAuthorId = async (
+  authorId: string,
+  limit: number,
+  page: number,
+  sortBy: SortOrder,
+) => {
+  const safeLimit: number = Math.max(1, limit);
+  const safePage: number = Math.max(1, page);
+  const startIndex: number = (safePage - 1) * safeLimit;
+
   const comments = await db.comment.findMany({
+    skip: startIndex,
+    take: safeLimit,
+    orderBy: {
+      createdAt: sortBy,
+    },
     where: {
       authorId,
     },
     include: {
       user: true,
+      post: true,
     },
   });
 
