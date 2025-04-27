@@ -42,7 +42,14 @@ export const getCommentsByAuthorId = async (
       authorId,
     },
     include: {
-      user: true,
+      user: {
+        select: {
+          firstName: true,
+          lastName: true,
+          username: true,
+          id: true,
+        },
+      },
       post: true,
     },
   });
