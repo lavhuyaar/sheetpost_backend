@@ -148,8 +148,6 @@ export const getAdminPosts = async (
   const safePage: number = Math.max(1, page);
   const startIndex: number = (safePage - 1) * safeLimit;
 
-  console.log(safeLimit, safePage, startIndex);
-
   const posts = await db.post.findMany({
     skip: startIndex,
     take: safeLimit,

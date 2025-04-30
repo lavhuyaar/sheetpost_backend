@@ -58,8 +58,8 @@ export const validatePost = [
 export const validateComment = [
   body('content')
     .trim()
-    .isLength({ min: 2, max: 250 })
+    .isLength({ min: 2, max: 1000 })
     .withMessage(
-      'Comment must contain atleast 2 characters and not more than 250 characters',
+      'Comment must contain atleast 2 characters and not more than 1000 characters',
     ),
 ];
