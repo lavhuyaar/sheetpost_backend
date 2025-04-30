@@ -48,7 +48,7 @@ export const getCommentsOnAuthor = async (
     return;
   }
 
-  const { limit = 10, page = 1, sortBy = 'desc' } = req.params;
+  const { limit = 10, page = 1, sortBy = 'desc' } = req.query;
 
   const { comments, totalCount } = await getCommentsByAuthorId(
     authorId,

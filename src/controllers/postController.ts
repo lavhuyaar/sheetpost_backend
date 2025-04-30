@@ -213,7 +213,15 @@ export const getPostsByAdmin = async (
     });
     return;
   }
-  const { posts, totalCount } = await getAdminPosts(authorId);
+
+  const { limit = 10, page = 1, sortBy = 'desc' } = req.query;
+
+  const { posts, totalCount } = await getAdminPosts(
+    authorId,
+    Number(limit),
+    Number(page),
+    sortBy as SortOrder,
+  );
   res.status(200).json({
     posts,
     totalCount,

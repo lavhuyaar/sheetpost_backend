@@ -137,8 +137,23 @@ export const deletePostById = async (id: string, authorId: string) => {
   });
 };
 
-export const getAdminPosts = async (authorId: string) => {
+export const getAdminPosts = async (
+  authorId: string,
+  limit: number,
+  page: number,
+  sortBy: SortOrder,
+) => {
+  //Pagination values
+  const safeLimit: number = Math.max(1, limit);
+  const safePage: number = Math.max(1, page);
+  const startIndex: number = (safePage - 1) * safeLimit;
+
+  console.log(safeLimit, safePage, startIndex);
+
   const posts = await db.post.findMany({
+    skip: startIndex,
+    take: safeLimit,
+    orderBy: { createdAt: sortBy },
     where: {
       authorId,
     },
