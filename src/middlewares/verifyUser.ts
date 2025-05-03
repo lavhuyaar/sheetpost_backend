@@ -5,7 +5,7 @@ const secretKey: string | undefined = process.env.JWT_USER_SECRET_KEY as string;
 
 const verifyUser = (req: CustomRequest, res: Response, next: NextFunction) => {
   if (!req.token) {
-    res.status(401).json({
+    res.status(403).json({
       message: 'Token not found',
     });
     return;

@@ -10,7 +10,7 @@ const verifyAuthor = (
   next: NextFunction,
 ) => {
   if (!req.token) {
-    res.status(401).json({
+    res.status(403).json({
       message: 'Token not found',
     });
     return;
