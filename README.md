@@ -32,7 +32,7 @@
 
 ### Personal thoughts:
 
-I loved this project. For me the backend was easier, I suck at desigining you see, so procrastinated to finish the frontend. Otherwise, this project would've been completed atleast a week ago.
+I loved this project. For me the backend was easier, I suck at designing you see, so procrastinated to finish the frontend. Otherwise, this project would've been completed atleast a week ago.
 
 The pagination part of this project was fun, deployment went super smooth. This was my first website where I had separate frontend and backend and I loved it. Finally I'm able to create APIs for modern use.
 
