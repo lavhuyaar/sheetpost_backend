@@ -10,7 +10,10 @@ import userRoutes from './routes/userRoutes';
 const app = express();
 app.use(express.json());
 
-const allowedLists: (string | undefined)[] = ['http://localhost:5173'];
+const allowedLists: (string | undefined)[] = [
+  'https://sheetpost-admin.vercel.app/',
+  'https://sheetpost.vercel.app/',
+];
 
 const corsOptionsDelegate = (req: Request, callback: Function) => {
   let corsOptions;
