@@ -3,12 +3,21 @@ import db from '../db';
 
 export const getCommentsByPostId = async (postId: string) => {
   const comments = await db.comment.findMany({
+    orderBy: {
+      createdAt: 'desc'
+    },
     where: {
       postId,
     },
     include: {
-      user: true,
-      author: true,
+      user: {
+        select: {
+          firstName: true,
+          lastName: true,
+          username: true,
+          id: true,
+        },
+      },
     },
   });
 

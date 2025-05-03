@@ -13,6 +13,7 @@ import { CustomRequest, SortOrder } from '../types/types';
 import { deleteAllCommentsOnPost } from '../db/queries/commentQueries';
 import { validatePost } from '../validators/validators';
 import { validationResult } from 'express-validator';
+import { getAuthorById } from '../db/queries/authorQueries';
 
 export const getAllPosts = async (
   req: Request,
@@ -78,15 +79,19 @@ export const getAuthorPosts = async (
     return;
   }
 
-  const posts = await getPostsByAuthorId(
+  const { posts, totalCount } = await getPostsByAuthorId(
     authorId,
     Number(limit),
     Number(page),
     sortBy as SortOrder,
   );
 
+  const author = await getAuthorById(authorId);
+
   res.status(200).json({
     posts,
+    totalCount,
+    author,
   });
   return;
 };

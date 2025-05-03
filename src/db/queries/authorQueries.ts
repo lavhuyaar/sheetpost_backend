@@ -16,6 +16,12 @@ export const getAuthorById = async (id: string) => {
     where: {
       id,
     },
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+    },
   });
   return author;
 };

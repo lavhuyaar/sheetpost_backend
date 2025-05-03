@@ -16,7 +16,7 @@ const postRoutes = Router();
 //Unprotected routes
 postRoutes.get('/', getAllPosts); //Get all posts (published)
 postRoutes.get('/post/:postId', getPost); //Get post with id
-postRoutes.get('/all/:authorId', getAuthorPosts); //Get all published posts of an author (website)
+postRoutes.get('/author/:authorId', getAuthorPosts); //Get all published posts of an author (website)
 
 //Authorization middlewares
 postRoutes.use(verifyToken, verifyAuthor);

@@ -14,7 +14,13 @@ interface PostFilters {
     authorId?: string;
   };
   include?: {
-    [key: string]: boolean;
+    [key: string]:
+      | boolean
+      | {
+          select?: {
+            [key: string]: boolean;
+          };
+        };
   };
 }
 
@@ -36,6 +42,15 @@ export const getPosts = async (
     where: {
       isPublished: true,
     },
+    include: {
+      author: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
   };
 
   const postsCount = await db.post.count({ where: filters.where });
@@ -53,7 +68,13 @@ export const getPostById = async (id: string) => {
       id,
     },
     include: {
-      author: true,
+      author: {
+        select: {
+          firstName: true,
+          lastName: true,
+          id: true,
+        },
+      },
       comments: true,
     },
   });
@@ -80,14 +101,12 @@ export const getPostsByAuthorId = async (
       authorId,
       isPublished: true,
     },
-    include: {
-      comments: true,
-    },
   };
 
   const posts = await db.post.findMany(filters);
+  const totalCount = await db.post.count({ where: filters.where });
 
-  return posts;
+  return { posts, totalCount };
 };
 
 export const createPost = async (
