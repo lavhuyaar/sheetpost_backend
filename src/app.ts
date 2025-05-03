@@ -11,8 +11,8 @@ const app = express();
 app.use(express.json());
 
 const allowedLists: (string | undefined)[] = [
-  'https://sheetpost-admin.vercel.app/',
-  'https://sheetpost.vercel.app/',
+  'https://sheetpost-admin.vercel.app',
+  'https://sheetpost.vercel.app',
 ];
 
 const corsOptionsDelegate = (req: Request, callback: Function) => {
